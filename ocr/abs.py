@@ -1,3 +1,5 @@
+#!/usr/bin/python
+#-*- coding: utf-8 -*-
 
 import re
 import xlrd
@@ -64,8 +66,6 @@ class excels():
                         continue
                     pdf_file.close()
                     text=ocr_read(path)
-                    if text==None:
-                        continue
                     text = text.replace("\n", " ")
                     print(text)
                     self.write(text,row_num)
@@ -142,6 +142,7 @@ def get_sections(text):
 
 def is_abs(abs):
     d = u = l = o = 0
+    print("---------------------------")
 
     if "@" in abs:
         print("有@符号！")

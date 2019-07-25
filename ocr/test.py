@@ -1,26 +1,39 @@
 
+#
+# import sys
+# import PyPDF2
+# import PythonMagick
+#
+# pdffilename = "C:/temp/oRxeC5q6BgOl.pdf"
+# pdf_im = PyPDF2.PdfFileReader(open(pdffilename, "rb"))
+# npage = pdf_im.getNumPages()
+# print('Converting %d pages.' % npage)
+# for p in range(npage):
+#  im = PythonMagick.Image(pdffilename + '[' + str(p) +']')
+#  im.density('300')
+#  #im.read(pdffilename + '[' + str(p) +']')
+#  im.write('file_out-' + str(p)+ '.png')
+#  #print pdffilename + '[' + str(p) +']','file_out-' + str(p)+ '.png'
+
+
+
+# # from wand.image import Image
+# from PythonMagick import Image
+#
+# image_pdf = Image("C:/temp/oRxeC5q6BgOl.pdf")
+# image_pdf.write("C:/temp/a")
+# print(image_pdf.type)
+# image_jpeg = image_pdf.convert('jpeg')
+
+
+from pdf2image import convert_from_path
 import tempfile
 import PIL.Image as Image
 import pytesseract
 import cv2
 import object_detection.export_inference_graph
-from pdf2image import convert_from_path
-import os
-import uuid
+
 ocr_paths=[]
-
-
-def create_image(dir):
-    for file_name in os.listdir(dir):
-        print(file_name)
-        path = os.path.join(dir,file_name)
-        print(path)
-        images=convert_from_path(path)
-        uid = str(uuid.uuid1())
-        suid = ''.join(uid.split('-'))
-        jpg_path="C:/temp/image/"+suid+".jpg"
-        images[0].save(jpg_path)
-
 
 def main(filename, outputDir):
     print('filename=', filename)
@@ -95,6 +108,7 @@ def create_box(pdf_path):
             args = line.split("\t")
             if int(args[3]) != 0:
                 continue
+
             cv2.rectangle(image, (int(args[6]), int(args[7])),
                           (int(args[6]) + int(args[8]), int(args[7]) + int(args[9])), (255, 0, 0))
         cv2.imwrite(image_path, image)
@@ -103,8 +117,8 @@ def create_box(pdf_path):
 
 def find_boxs(boxs,image_path):
     # print(pytesseract.image_to_data("C:/temp/png/page_0.jpg"))
-    image_path="C:/temp/png/page_0.jpg"
-    path="C:/temp/png/"
+    image_path="D:/data/temp/page_0.jpg"
+    path="D:/data/temp"
     image = cv2.imread(image_path)
     box = pytesseract.image_to_data(image)
     for index,line in enumerate(box.split("\n")):
@@ -123,52 +137,15 @@ def find_boxs(boxs,image_path):
         B=(int(args[6]) + int(args[8]), int(args[7]) + int(args[9]))
         print(int(args[6]),int(args[7]),int(args[6]) + int(args[8]),int(args[7]) + int(args[9]))
         new_image=image[int(args[7]):int(args[7]) + int(args[9]),int(args[6]):int(args[6]) + int(args[8])]
-        print(pytesseract.image_to_string(new_image))
+        # print(pytesseract.image_to_string(new_image))
         cv2.imwrite(path+str(index)+".jpg",new_image)
         # cv2.rectangle(image, (int(args[6]), int(args[7])),
         #               (int(args[6]) + int(args[8]), int(args[7]) + int(args[9])), (255, 0, 0))
 
 
-def mat_inter(box1, box2):
-    # 判断两个矩形是否相交
-    # box=(xA,yA,xB,yB)
-    x01, y01, x02, y02 = box1
-    x11, y11, x12, y12 = box2
-    minx=max(x01,x11)
-    miny=max(y01,y11)
-    maxx=min(x02,x12)
-    maxy=min(y02,y12)
-
-    if minx> maxx or miny>maxy:
-        return False
-    else:
-        return True
 
 
-def box_rectint(box1, box2):
-    '''
 
-    计算两个矩形框的重合度
-    box=(xA,yA,xB,yB)
-    xA,yA---矩形左上顶点的坐标
-    xB,yB---矩形右下顶点的坐标
-    :param box1:
-    :param box2:
-    :return:
-    '''
-
-    if mat_inter(box1, box2) == True:
-        x01, y01, x02, y02 = box1
-        x11, y11, x12, y12 = box2
-        col = min(x02, x12) - max(x01, x11)
-        row = min(y02, y12) - max(y01, y11)
-        intersection = col * row
-        area1 = (x02 - x01) * (y02 - y01)
-        area2 = (x12 - x11) * (y12 - y11)
-        coincide = intersection / (area1 + area2 - intersection)
-        return coincide
-    else:
-        return 0
 
 
 
@@ -182,8 +159,7 @@ def test():
 
 if __name__ == "__main__":
     # create_box("C:/pdfs/dynamic/1a2dd1fa5d0511e9a9ca00ac37466cf9.pdf")
-    create_image("C:/pdfs/hs0418")
-    # find_boxs(None,None)
+    find_boxs(None,None)
     # test()
     # # print("a".isalpha())
     # main('C:/temp/新建文件夹/0kKzRNRpJayT.pdf', 'C:/temp')

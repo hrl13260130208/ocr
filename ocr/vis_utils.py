@@ -798,7 +798,10 @@ def visualize_boxes_and_labels_on_image_array(
               classes[i] % len(STANDARD_COLORS)]
 
   # Draw all boxes onto image.
+  item_dict={}
   for box, color in box_to_color_map.items():
+    # print("--------------",box)
+    # print("++++++++++++++",box_to_display_str_map)
     ymin, xmin, ymax, xmax = box
     image_pil = Image.fromarray(np.uint8(image)).convert('RGB')
     im_width, im_height = image_pil.size
@@ -807,40 +810,11 @@ def visualize_boxes_and_labels_on_image_array(
                                       ymin * im_height, ymax * im_height)
     else:
         (left, right, top, bottom) = (xmin, xmax, ymin, ymax)
+    # print(left,right,top,bottom,box_to_display_str_map[box])
 
-    print(box_to_display_str_map[box],left,right,top,bottom)
-    if instance_masks is not None:
-      draw_mask_on_image_array(
-          image,
-          box_to_instance_masks_map[box],
-          color=color
-      )
-    if instance_boundaries is not None:
-      draw_mask_on_image_array(
-          image,
-          box_to_instance_boundaries_map[box],
-          color='red',
-          alpha=1.0
-      )
-    draw_bounding_box_on_image_array(
-        image,
-        ymin,
-        xmin,
-        ymax,
-        xmax,
-        color=color,
-        thickness=line_thickness,
-        display_str_list=box_to_display_str_map[box],
-        use_normalized_coordinates=use_normalized_coordinates)
-    if keypoints is not None:
-      draw_keypoints_on_image_array(
-          image,
-          box_to_keypoints_map[box],
-          color=color,
-          radius=line_thickness / 2,
-          use_normalized_coordinates=use_normalized_coordinates)
+    item_dict[str(box_to_display_str_map[box])]=(left,right,top,bottom)
 
-  return image
+  return item_dict
 
 
 def add_cdf_image_summary(values, name):

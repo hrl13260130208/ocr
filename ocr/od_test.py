@@ -5,19 +5,16 @@ from matplotlib import pyplot as plt
 from PIL import Image
 
 from object_detection.utils import label_map_util
-# from object_detection.utils import visualization_utils as vis_util
-from ocr import utils as vis_util
+from object_detection.utils import visualization_utils as vis_util
+#from collector.ocr import utils as vis_util
+# import ocr.vis_utils as vis_util
 
 
 # What model to download.
 # model_path="C:/data/taa/train_model/save_model"
-pb_path="C:/data/taa/save/frozen_inference_graph.pb"
-label_path="C:/data/taa/pascal_label_map.pbtxt"
-test_image="C:/temp/png/page_0.jpg"
-
-
-
-
+pb_path="D:/data/taa/save/frozen_inference_graph.pb"
+label_path="D:/data/taa/pascal_label_map.pbtxt"
+test_image="D:/data/taa/train_data_0709/e9265d4c698e11e9859f00ac37466cf9.jpg"
 
 
 #Load a (frozen) Tensorflow model into memory.
@@ -48,8 +45,15 @@ IMAGE_SIZE = (12, 8)
 
 with detection_graph.as_default():
   with tf.Session(graph=detection_graph) as sess:
-
-
+    # Definite input and output Tensors for detection_graph
+    image_tensor = detection_graph.get_tensor_by_name('image_tensor:0')
+    # Each box represents a part of the image where a particular object was detected.
+    detection_boxes = detection_graph.get_tensor_by_name('detection_boxes:0')
+    # Each score represent how level of confidence for each of the objects.
+    # Score is shown on the result image, together with the class label.
+    detection_scores = detection_graph.get_tensor_by_name('detection_scores:0')
+    detection_classes = detection_graph.get_tensor_by_name('detection_classes:0')
+    num_detections = detection_graph.get_tensor_by_name('num_detections:0')
     #for image_path in TEST_IMAGE_PATHS:
     image = Image.open(test_image)
     # the array based representation of the image will be used later in order to prepare the
@@ -70,14 +74,14 @@ with detection_graph.as_default():
         [boxes, scores, classes, num_detections],
         feed_dict={image_tensor: image_np_expanded})
     # Visualization of the results of a detection.
-    vis_util.visualize_boxes_and_labels_on_image_array(
+    print(vis_util.visualize_boxes_and_labels_on_image_array(
         image_np,
         np.squeeze(boxes),
         np.squeeze(classes).astype(np.int32),
         np.squeeze(scores),
         category_index,
         use_normalized_coordinates=True,
-        line_thickness=8)
+        line_thickness=8))
 
 
     # count = 0
