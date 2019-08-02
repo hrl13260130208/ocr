@@ -21,11 +21,7 @@ class excels():
         self.file_path=file_path
         self.values=["path","abstract"]
         self.nums={}
-
         self.create()
-
-
-
     def create(self):
         rb = xlrd.open_workbook(self.file_path)
         self.r_sheet = rb.sheet_by_index(0)
@@ -75,7 +71,18 @@ class excels():
                 print("路径不存在！")
         self.save()
 
-
+    def clear_abs(self):
+        for row in range(self.r_sheet.nrows - 1):
+            row_num = row + 1
+            print(row_num)
+            abs = self.r_sheet.cell(row_num, self.nums["abstract"]).value
+            print(abs)
+            if abs != "":
+                new_abs=abs_head_clear(abs)
+                if new_abs==None:
+                    new_abs=""
+                self.write(new_abs,row_num)
+        self.save()
 
     def write(self,text,row_num):
         self.w_sheet.write(row_num,self.nums["abstract"],text)
@@ -104,48 +111,48 @@ def ocr_read(filename):
         text=get_abs(pytesseract.image_to_string(image_path))
         if text!=None:
             return text
+
 def get_abs(text):
     abs_num=text.lower().find("abstract")
+    if abs_num>text.__len__()*9/10:
+        abs_num=-1
     if abs_num!=-1:
         keywords_num=text.lower().find("keywords")
         if keywords_num!=-1:
-            if keywords_num<abs_num+8:
-                for section in get_sections(text):
-                    if section.__len__() > 500:
-                        num = section.rfind(".")
-                        if num > 500:
-                            return abs_clear(section[:num + 1])
-            else:
-                return abs_clear(text[abs_num+8:keywords_num])
+            if keywords_num>abs_num+8:
+
+                return abs_clear(text[abs_num:keywords_num])
         else:
             # print(text)
             abs=""
             for section in get_sections(text[abs_num+8:]):
-                if section.__len__()>500:
-                    abs=section
-                    break
-                else:
-                    abs+=section+"\n"
-                    if abs.__len__()>500:
+                if section.__len__()>300:
+                    if is_abs(section):
+                        abs+=section
                         break
+                else:
+                    if is_abs(section):
+                        abs+=section+"\n"
+                        if abs.__len__()>300:
+                            break
             return abs_clear(abs)
     else:
         for section in get_sections(text):
-            if section.__len__()>500:
-                num=section.rfind(".")
-                if num >500:
-                    return abs_clear(section[:num+1])
-
+            if section.__len__()>300:
+                if is_abs(section):
+                    num=section.rfind(".")
+                    if num >300:
+                        return abs_clear(section[:num+1])
 
 def get_sections(text):
     return text.split("\n\n")
 
 def is_abs(abs):
     d = u = l = o = 0
-    print("---------------------------")
 
     if "@" in abs:
         print("有@符号！")
+        print("摘要：", abs)
         return False
     for i in range(len(abs)):
         if abs[i] in string.digits:
@@ -157,15 +164,18 @@ def is_abs(abs):
         elif abs[i] in string.punctuation:
             o += 1
 
-    print("数字：",d,d/abs.__len__())
     if d/abs.__len__()>0.01:
+        print("数字比例过高：", d, d / abs.__len__())
+        print("摘要：",abs)
         return False
-    print("大写字母：",u,u/abs.__len__())
+
     if u/ abs.__len__() > 0.05:
+        print("大写字母比例过高：", u, u / abs.__len__())
+        print("摘要：", abs)
         return False
-    print("小写字母：",l,l/abs.__len__())
-    print("标点特殊字符：",o,o/abs.__len__())
     if u/ abs.__len__() > 0.1:
+        print("标点特殊字符比例过高：", o, o / abs.__len__())
+        print("摘要：", abs)
         return False
 
     return True
@@ -174,19 +184,36 @@ def is_abs(abs):
 
 
 def abs_clear(abs):
-    if is_abs(abs):
-        abs=abs_head_clear(abs.strip())
-        print("last char:",abs[-1])
-        if abs[-1] !="." and abs[-1] !="。":
-            abs=abs+"."
-        return abs
+    abs=abs_head_clear(abs.strip())
+    if abs==None:
+        return None
+    print("last char:",abs[-1])
+    if abs[-1] !="." and abs[-1] !="。":
+        abs=abs+"."
+    return abs
 def abs_head_clear(abs):
-    if abs[0].isalpha():
-        if abs[0].islower():
-            abs=abs[0].upper()+abs[1:]
+    if ":" in abs:
+        num = abs.find(":")
+        if num < 30:
+            abs=abs[num+1:].strip()
+    else:
+        sumnary=re.match("SUMMARY",abs)
+        if sumnary!=None:
+            abs=abs[sumnary.end():].strip()
+    abs=find_upper(abs)
+    if abs.__len__()<150:
+        print("摘要过短！")
+        abs=None
+    return abs
+
+def find_upper(abs):
+    if abs.__len__()<150:
+        return abs
+    if abs[0].isupper():
         return abs
     else:
-        return abs_head_clear(abs[1:])
+        return find_upper(abs[1:])
+
 def run(excel_path):
     '''
     Excel 要求：Excel第一行为列名，必须有列（）：path，abstract
@@ -197,6 +224,7 @@ def run(excel_path):
     :return:
     '''
     excels(excel_path).read()
+    # excels(excel_path).clear_abs()
 
 def run_dir(dir):
     wb = xlwt.Workbook(encoding="utf-8")
@@ -241,8 +269,8 @@ def ocr_read_jpn(filename):
 
 if __name__ == '__main__':
     # run("C:/execl/aae6.xlsx")
-    # run("C:/public/目次采全文/0617/中信所缺失摘要清单_20190621..xls")
-    print(ocr_read("G:/hrl/0621/中信/zx0621-c3/4efec686940f11e9abe8b083fe6ed898.pdf"))
+    run(r"C:\execl\wc_hrl_N-OMICS_20190801_1_20190801_.xlsx")
+    # print(ocr_read(r"G:\hrl\0723\zx0723-c2/601fdf5cad3711e9837500ac1f744c94.pdf"))
     # run_dir("C:/temp/新建文件夹")
     # path="C:/pdfs/iccm"
     # c_path="C:/temp/train"

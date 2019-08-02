@@ -160,6 +160,7 @@ def test():
 if __name__ == "__main__":
     # create_box("C:/pdfs/dynamic/1a2dd1fa5d0511e9a9ca00ac37466cf9.pdf")
     find_boxs(None,None)
+
     # test()
     # # print("a".isalpha())
     # main('C:/temp/新建文件夹/0kKzRNRpJayT.pdf', 'C:/temp')

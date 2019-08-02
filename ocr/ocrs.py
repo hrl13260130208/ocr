@@ -18,8 +18,8 @@ def load_image_into_numpy_array(image):
 
 class object_ocr():
     def __init__(self):
-        pb_path = "D:/data/taa/save/frozen_inference_graph.pb"
-        label_path = "D:/data/taa/pascal_label_map.pbtxt"
+        pb_path = "C:/data/taa/save/frozen_inference_graph.pb"
+        label_path = "C:/data/taa/pascal_label_map.pbtxt"
         self.detection_graph = tf.Graph()
         with self.detection_graph.as_default():
             od_graph_def = tf.GraphDef()
@@ -85,6 +85,7 @@ class ocr():
         self.image = cv2.imread(image_path)
         if item.keys().__len__()==0:
             return None
+
         box = pytesseract.image_to_data(self.image)
 
         new_item={}
@@ -131,6 +132,7 @@ class ocr():
         return new_item
 
     def read_items(self,items):
+        print(items)
         string_dict = {}
         for key in items.keys():
             if items[key].__len__() > 1:
@@ -138,18 +140,32 @@ class ocr():
                     for box in items[key]:
                         new_image = self.image[box[1]:box[3], box[0]:box[2]]
                         text = pytesseract.image_to_string(new_image)
-                        if text.__len__() > 500:
-                            string_dict[key] = text
-                            break
+                        if text.__len__()<100:
+                            continue
+                        string_dict[key] = text
+                        break
             else:
                 box = items[key][0]
-                new_image = items[box[1]:box[3], box[0]:box[2]]
+                new_image = self.image[box[1]:box[3], box[0]:box[2]]
                 string_dict[key] = pytesseract.image_to_string(new_image)
 
         return string_dict
 
     def read(self,image_path):
-        return self.read_items(self.get_items(image_path))
+        dict=self.read_items(self.get_items(image_path))
+        if "abs" in dict:
+            if "\n\n" in dict["abs"]:
+                lines=dict["abs"].split("\n\n")
+                if lines[0].__len__()<15:
+                    lines[0]=" "
+                    dict["abs"]=" ".join(lines).strip()
+            if ":" in dict["abs"]:
+                num=dict["abs"].find(":")
+                if num<15:
+                    dict["abs"]= dict["abs"][num:].strip()
+
+
+        return dict
 
 
     def auto_annotation(self,image_path):
@@ -240,14 +256,15 @@ def test():
 
 
 if __name__ == '__main__':
-    # print(ocr().get_items("D:/data/taa/train_data_0709/fe95f946698e11e9a27800ac37466cf9.jpg"))
+    print(ocr().read(r"C:\temp\image\b9c0cc34a83911e9a01a00ac37466cf9.jpg"))
     # ocr().auto_annotation("D:/data/image/00a33386a83b11e9bd8900ac37466cf9.jpg")
 
 
-    for file in os.listdir("D:/data/image"):
-        if ".jpg" in file:
-            path="D:/data/image/"+file
-            ocr().auto_annotation(path)
+    # for file in os.listdir("D:/data/image"):
+    #     if ".jpg" in file:
+    #         path="D:/data/image/"+file
+    #         # ocr().auto_annotation(path)
+    #         ocr().read(path)
 
 
 

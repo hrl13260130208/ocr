@@ -12,9 +12,9 @@ from object_detection.utils import visualization_utils as vis_util
 
 # What model to download.
 # model_path="C:/data/taa/train_model/save_model"
-pb_path="D:/data/taa/save/frozen_inference_graph.pb"
-label_path="D:/data/taa/pascal_label_map.pbtxt"
-test_image="D:/data/taa/train_data_0709/e9265d4c698e11e9859f00ac37466cf9.jpg"
+pb_path="C:/data/taa/save/frozen_inference_graph.pb"
+label_path="C:/data/taa/pascal_label_map.pbtxt"
+test_image=r"C:\temp\image\b9c0cc34a83911e9a01a00ac37466cf9.jpg"
 
 
 #Load a (frozen) Tensorflow model into memory.
