@@ -410,14 +410,14 @@ def queue_update(text_path):
 
 
 if __name__ == '__main__':
-    # run("C:/execl/aae6.xlsx")
-    run_text(r"G:\hrl\adams1\adams\adams1.txt",r"G:\hrl\adams1\adams\1950-2010",skip_first=True)
+    # run(r"C:\public\目次采全文\0909\中信所缺失摘要清单_20190909..xls")
+    # run_text(r"G:\hrl\adams1\adams\adams1.txt",r"G:\hrl\adams1\adams\1950-2010",skip_first=True)
     # logger.debug("ks")
     # print(is_abs("Introduction .................................................................................................................................................... 3."))
     # run(r"G:\hrl\adams1\adams\adams.xls")
     # for key in redis_.keys("*"):
     #     redis_.delete(key)
-    # write_pages_and_absurl(r"C:\public\目次采全文\0903\中信所待补全文清单_20190903..xls")
+    # write_pages_and_absurl(r"C:\public\目次采全文\0909\中信所待补全文清单_20190909..xls")
     # print(ocr_read(r"G:\hrl\0723\zx0723-c2/601fdf5cad3711e9837500ac1f744c94.pdf"))
     # run_dir("C:/temp/新建文件夹")
     # path="C:/pdfs/iccm"
@@ -437,6 +437,28 @@ if __name__ == '__main__':
 
     # path="Z:/数据组内部共享/中信所2019年任务/补摘要/Japan Society for Aeronautical and Space Sciences 抽/ISTS1/6RyKnw4m14tQ.pdf"
     # py2pdf_read(path)
+
+    set1=set()
+    abs=dict()
+    for item in open(r"H:\hrl\adams1\adams\abs.txt",encoding="utf-8").readlines():
+        print(item)
+        args=item.replace("\n","").split("$$$$")
+        abs[args[0]]=args[1]
+    for item in open(r"H:\hrl\adams1\adams\nofind.txt",encoding="utf-8").readlines():
+        set1.add(item.replace("\n",""))
+
+    file1=open(r"H:\hrl\adams1\adams\adams_find.txt","w+",encoding="utf-8")
+    file2=open(r"H:\hrl\adams1\adams\adams_nofind.txt","w+",encoding="utf-8")
+
+    for item in open(r"H:\hrl\adams1\adams\adams1.txt","r",encoding="utf-8").readlines():
+        args=item.replace("\n","").split("$$$$")
+        if args[1] in set1:
+            file2.write(item)
+        elif args[1] in abs:
+            file1.write(args[0]+"$$$$empty$$$$"+abs[args[1]]+"$$$$"+args[3]+"$$$$0$$$$"+args[1]+"\n")
+        else:
+            file1.write(args[0] + "$$$$empty$$$$empty$$$$" + args[3] + "$$$$0$$$$" + args[1] + "\n")
+
 
 
 

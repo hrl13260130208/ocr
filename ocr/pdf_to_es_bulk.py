@@ -161,7 +161,7 @@ def update_file(file_path):
         if args.__len__()!=6:
             print("字段数有误！")
         else:
-            data.append({"_index": "pdf",
+            data.append({"_index": "pdf_",
                          "_type": "test",
                          "_source": {"title": args[0], "author": args[1],"abstract":args[2],"date":args[3],"page_count":args[4],"ad":args[5]+".pdf"}
                          })
@@ -200,10 +200,10 @@ def pdf_to_text(pdf_dir,text_dir,thread_num=10):
 
 
 if __name__ == '__main__':
-    # update_file(r"C:\Users\zhaozhijie.CNPIEC\Documents\Tencent Files\2046391563\FileRecv\muci(1).txt")
+    update_file(r"C:\Users\zhaozhijie.CNPIEC\Documents\Tencent Files\2046391563\FileRecv\muci(1).txt")
     # update(r"C:\pdfs\jx0621")
     # pdf_to_text(r"C:\pdfs\jx0621",r"C:\pdfs\test")
-    read_pdf(r"G:\hrl\adams1\adams\1950-2010\ML19196A077.pdf")
+    # read_pdf(r"G:\hrl\adams1\adams\1950-2010\ML19196A077.pdf")
 
 
 
