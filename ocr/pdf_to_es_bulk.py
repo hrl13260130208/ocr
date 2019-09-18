@@ -161,7 +161,7 @@ def update_file(file_path):
         if args.__len__()!=6:
             print("字段数有误！")
         else:
-            data.append({"_index": "pdf_",
+            data.append({"_index": "pdf",
                          "_type": "test",
                          "_source": {"title": args[0], "author": args[1],"abstract":args[2],"date":args[3],"page_count":args[4],"ad":args[5]+".pdf"}
                          })
