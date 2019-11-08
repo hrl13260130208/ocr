@@ -405,15 +405,6 @@ class excels():
             self.logger.error("err", exc_info=True)
 
     def read_abs(self,path):
-        # pdf_file = open(path, "rb")
-        # print("+++++++++++")
-        # pdf = PyPDF2.PdfFileReader(pdf_file, strict=False)
-        # print(pdf.getNumPages())
-        # if pdf.getNumPages() > 100:
-        #     pdf_file.close()
-        #     return
-        # pdf_file.close()
-        # print("-----------")
         text = self.ocr_read(path)
         return text
 
@@ -544,27 +535,6 @@ class excels():
     def save(self):
         self.wb.save(self.file_path)
 
-
-# class QPlainTextEditLogger(logging.Handler):
-#     def __init__(self, parent):
-#         # super(Logger, self).__init__()
-#         super().__init__()
-#         self.widget = QPlainTextEdit(parent)
-#         self.widget.resize(400,200)
-#         self.widget.setReadOnly(True)
-#
-#     def emit(self, record):
-#         msg = self.format(record)
-#         self.widget.appendPlainText(msg)
-#         loop = QEventLoop()
-#         QTimer.singleShot( 10,loop.quit)
-#         loop.exec_()
-#
-#     def move(self,x,y):
-#         self.widget.move(x,y)
-#
-#     def write(self, m):
-#         pass
 
 class EmittingStr(QtCore.QObject):
     textWritten = QtCore.pyqtSignal(str)  # 定义一个发送str的信号
