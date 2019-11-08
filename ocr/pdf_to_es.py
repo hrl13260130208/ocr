@@ -285,12 +285,13 @@ if __name__ == '__main__':
     # upload_pdf(r"C:\pdfs\hs0610-c2\0d8101a68e7111e9a35f00ac37466cf9.pdf")
     # upload_dir(r"C:\pdfs\hg0621-c1")
     # update(r"C:\pdfs\osti_0801")
-    bulk_test(r"C:\pdfs\jx0621")
+    # bulk_test(r"C:\pdfs\jx0621")
     # read_pdf(r"C:\pdfs\hs0610-c2\0d8101a68e7111e9a35f00ac37466cf9.pdf")
     # test()
     # print(redis_.llen(QUEUE_NAME))
     # redis_.delete(QUEUE_NAME)
     # get_data()
+    print(read_pdf(r"C:\pdfs\hs0610-c2\0d8101a68e7111e9a35f00ac37466cf9.pdf"))
 
 
 

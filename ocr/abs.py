@@ -18,8 +18,11 @@ from pdfminer.converter import PDFPageAggregator
 from pdfminer.layout import LTTextBoxHorizontal,LAParams
 from pdfminer.pdfinterp import PDFTextExtractionNotAllowed
 import sys
+from stanfordcorenlp import StanfordCoreNLP
 
 FILE_NAME_QUEUE="file_name_queue"
+outputDir="C:/temp/png"
+# nlp = StanfordCoreNLP(r'C:\File\stanford-corenlp-full-2016-10-31')
 
 redis_ = redis.Redis(host="10.3.1.99", port=6379, db=5,decode_responses=True)
 logging.basicConfig(level = logging.INFO,format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s',stream=sys.stdout)
@@ -54,7 +57,7 @@ class excels():
     def read(self):
 
         # self.create()
-        print("====")
+        # print("====")
         for row in range(self.r_sheet.nrows-1):
             row_num=row+1
             print(row_num)
@@ -115,7 +118,7 @@ def ocr_read(filename):
     if not os.path.exists(filename):
         raise ValueError("PDF不存在！")
 
-    outputDir="C:/temp/png"
+
     try:
         images = convert_from_path(filename)
         for index, img in enumerate(images):
@@ -167,12 +170,17 @@ def pdfminer_read(path):
             # 想要获取文本就获得对象的text属性，
             for x in layout:
                 if (isinstance(x, LTTextBoxHorizontal)):
-
                         results = x.get_text()
                         if is_abs(results):
                             text=abs_clear(results)
                             if text!=None:
                                 return text
+
+
+
+
+
+
 
 
 def get_abs(text):
@@ -259,10 +267,13 @@ def abs_head_clear(abs):
         num = abs.find(":")
         if num < 30:
             abs=abs[num+1:].strip()
-    else:
-        sumnary=re.match("SUMMARY",abs)
-        if sumnary!=None:
-            abs=abs[sumnary.end():].strip()
+
+    sumnary=re.match("SUMMARY",abs.upper())
+    if sumnary!=None:
+        abs=abs[sumnary.end():].strip()
+    abstract=re.match("ABSTRACT",abs.upper())
+    if abstract!=None:
+        abs=abs[abstract.end():].strip()
     abs=find_upper(abs)
     if abs.__len__()<150:
         logger.debug("摘要过短！")
@@ -323,7 +334,7 @@ def ocr_read_jpn(filename):
         if index > 2:
             break
         image_path = '%s/page_%s.png' % (outputDir, index)
-        print(image_path)
+        # print(image_path)
         img.save(image_path)
         print(pytesseract.image_to_string(image_path))
         # text = get_abs(pytesseract.image_to_string(image_path,lang="jpn"))
@@ -409,55 +420,29 @@ def queue_update(text_path):
             redis_.lpush(FILE_NAME_QUEUE,args[1])
 
 
+
+
+
+
 if __name__ == '__main__':
-    run(r"C:\public\目次采全文\0909\中信所缺失摘要清单_20190909..xls")
-    # run_text(r"G:\hrl\adams1\adams\adams1.txt",r"G:\hrl\adams1\adams\1950-2010",skip_first=True)
-    # logger.debug("ks")
-    # print(is_abs("Introduction .................................................................................................................................................... 3."))
-    # run(r"G:\hrl\adams1\adams\adams.xls")
-    # for key in redis_.keys("*"):
-    #     redis_.delete(key)
-    # write_pages_and_absurl(r"C:\public\目次采全文\0909\中信所待补全文清单_20190909..xls")
-    # print(ocr_read(r"G:\hrl\0723\zx0723-c2/601fdf5cad3711e9837500ac1f744c94.pdf"))
-    # run_dir("C:/temp/新建文件夹")
-    # path="C:/pdfs/iccm"
-    # c_path="C:/temp/train"
-    # for file in os.listdir(path):
-    #     file_path=os.path.join(path,file)
-    #     print(file_path)
-    #     img=convert_from_path(file_path)
-    #     img[0].save(os.path.join(c_path,file.replace(".pdf",".jpg")))
+    # pass
+    # author_test(r"C:\pdfs\yj0903\1dc83526cdfd11e9aade00ac37466cf9.pdf")
+    # author_test(r"C:\pdfs\yj0903\4d2ff066cdfc11e98b9e00ac37466cf9.pdf")
+    # print(nlp.ner("Mingxing Du"))
+    # run(r"D:\test\1\wc_hrl_700_20191023_1_20191023.xls")
+    # write_pages_and_absurl(r"C:\public\目次采全文\0927\中信所待补全文清单_20190926..xls")
+
+    # ocr_read_jpn(r"C:\Users\zhaozhijie.CNPIEC\Documents\Tencent Files\2046391563\FileRecv\AD787568.pdf")
+    filename=r"C:\Users\zhaozhijie.CNPIEC\Documents\Tencent Files\2046391563\FileRecv\AD008384.pdf"
+    f=open(r"C:\temp\other\AD008384.txt","w+",encoding="utf-8")
+    images = convert_from_path(filename)
+    for index, img in enumerate(images):
+        image_path = '%s/page_%s.png' % (outputDir, index)
+        logger.info("临时图片路径：" + image_path)
+        img.save(image_path)
+        f.write(pytesseract.image_to_string(image_path))
 
 
-    # excels("C:/temp/ISTS1.xls").read()
-    # path="C:/temp/oRxeC5q6BgOl.pdf"
-    # read(path)
-    # path="Z:/数据组内部共享/中信所2019年任务/132/1-東光高岳-69874\httpswww.tktk.co.jpresearchreportpdf2014giho2014_27.pdf"
-    # print("=============",read(path))
-
-    # path="Z:/数据组内部共享/中信所2019年任务/补摘要/Japan Society for Aeronautical and Space Sciences 抽/ISTS1/6RyKnw4m14tQ.pdf"
-    # py2pdf_read(path)
-
-    # set1=set()
-    # abs=dict()
-    # for item in open(r"H:\hrl\adams1\adams\abs.txt",encoding="utf-8").readlines():
-    #     print(item)
-    #     args=item.replace("\n","").split("$$$$")
-    #     abs[args[0]]=args[1]
-    # for item in open(r"H:\hrl\adams1\adams\nofind.txt",encoding="utf-8").readlines():
-    #     set1.add(item.replace("\n",""))
-    #
-    # file1=open(r"H:\hrl\adams1\adams\adams_find.txt","w+",encoding="utf-8")
-    # file2=open(r"H:\hrl\adams1\adams\adams_nofind.txt","w+",encoding="utf-8")
-    #
-    # for item in open(r"H:\hrl\adams1\adams\adams1.txt","r",encoding="utf-8").readlines():
-    #     args=item.replace("\n","").split("$$$$")
-    #     if args[1] in set1:
-    #         file2.write(item)
-    #     elif args[1] in abs:
-    #         file1.write(args[0]+"$$$$empty$$$$"+abs[args[1]]+"$$$$"+args[3]+"$$$$0$$$$"+args[1]+"\n")
-    #     else:
-    #         file1.write(args[0] + "$$$$empty$$$$empty$$$$" + args[3] + "$$$$0$$$$" + args[1] + "\n")
 
 
 

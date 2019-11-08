@@ -1,7 +1,7 @@
 import datetime
 from elasticsearch import Elasticsearch
 from elasticsearch import helpers
-import base64
+import sys
 import os
 import logging
 import time
@@ -200,6 +200,9 @@ def pdf_to_text(pdf_dir,text_dir,thread_num=10):
 
 
 if __name__ == '__main__':
+    path=sys.argv[0]
+    f
+    print(path)
     update_file(r"C:\Users\zhaozhijie.CNPIEC\Documents\Tencent Files\2046391563\FileRecv\muci(1).txt")
     # update(r"C:\pdfs\jx0621")
     # pdf_to_text(r"C:\pdfs\jx0621",r"C:\pdfs\test")
