@@ -1,30 +1,4 @@
 
-#
-# import sys
-# import PyPDF2
-# import PythonMagick
-#
-# pdffilename = "C:/temp/oRxeC5q6BgOl.pdf"
-# pdf_im = PyPDF2.PdfFileReader(open(pdffilename, "rb"))
-# npage = pdf_im.getNumPages()
-# print('Converting %d pages.' % npage)
-# for p in range(npage):
-#  im = PythonMagick.Image(pdffilename + '[' + str(p) +']')
-#  im.density('300')
-#  #im.read(pdffilename + '[' + str(p) +']')
-#  im.write('file_out-' + str(p)+ '.png')
-#  #print pdffilename + '[' + str(p) +']','file_out-' + str(p)+ '.png'
-
-
-
-# # from wand.image import Image
-# from PythonMagick import Image
-#
-# image_pdf = Image("C:/temp/oRxeC5q6BgOl.pdf")
-# image_pdf.write("C:/temp/a")
-# print(image_pdf.type)
-# image_jpeg = image_pdf.convert('jpeg')
-
 
 from pdf2image import convert_from_path
 import tempfile
@@ -32,6 +6,8 @@ import PIL.Image as Image
 import pytesseract
 import cv2
 import object_detection.export_inference_graph
+from stanfordcorenlp import StanfordCoreNLP
+
 
 ocr_paths=[]
 
@@ -157,10 +133,25 @@ def test():
     cv2.imwrite( "C:/temp/png/1.jpg", new_image)
 
 
+
+def nlp():
+    nlp = StanfordCoreNLP(r'C:\File\stanford-corenlp-full-2016-10-31')
+
+    sentence = "Carlos Navarro-Retamal andJulio Caballero *"
+    print('Tokenize:', nlp.word_tokenize(sentence))
+    print('Part of Speech:', nlp.pos_tag(sentence))
+    print( 'Named Entities:', nlp.ner(sentence))
+    print('Constituency Parsing:', nlp.parse(sentence))
+
+    print('Dependency Parsing:', nlp.dependency_parse(sentence))
+
+
+
+
 if __name__ == "__main__":
     # create_box("C:/pdfs/dynamic/1a2dd1fa5d0511e9a9ca00ac37466cf9.pdf")
-    find_boxs(None,None)
-
+    # find_boxs(None,None)
+    nlp()
     # test()
     # # print("a".isalpha())
     # main('C:/temp/新建文件夹/0kKzRNRpJayT.pdf', 'C:/temp')
