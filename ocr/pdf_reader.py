@@ -39,7 +39,9 @@ class excels():
 
     def __init__(self,file_path,find_abstract=False,find_author=False,logger=None,
                  nlp_path=r'C:\File\stanford-corenlp-full-2016-10-31'):
-        self.outputDir = "C:/temp/png"
+        self.outputDir = os.path.join(os.path.abspath("."),"png")
+        if not self.outputDir:
+            os.mkdir(self.outputDir)
         if not os.path.exists(self.outputDir):
             os.mkdir(self.outputDir)
 
@@ -47,6 +49,7 @@ class excels():
             pass
         else:
             self.logger=logger
+        print("================",nlp_path)
         self.nlp = StanfordCoreNLP(nlp_path)
 
         if file_path!=None:
