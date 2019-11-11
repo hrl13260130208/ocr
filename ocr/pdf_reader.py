@@ -25,8 +25,7 @@ from PyQt5.QtWidgets import QMainWindow, QPushButton, \
 
 
 
-
-
+NLP_DIR="stanford-corenlp-full-2018-10-05"
 PATH="path"
 ABSTRACT="abstract"
 AUTHOR_NAME="author_name"
@@ -40,7 +39,9 @@ class excels():
 
     def __init__(self,file_path,find_abstract=False,find_author=False,logger=None,
                  nlp_path=r'C:\File\stanford-corenlp-full-2016-10-31'):
-        self.outputDir = "C:/temp/png"
+        self.outputDir = os.path.join(os.path.abspath("."),"png")
+        if not self.outputDir:
+            os.mkdir(self.outputDir)
         if not os.path.exists(self.outputDir):
             os.mkdir(self.outputDir)
 
@@ -48,6 +49,7 @@ class excels():
             pass
         else:
             self.logger=logger
+        print("================",nlp_path)
         self.nlp = StanfordCoreNLP(nlp_path)
 
         if file_path!=None:
@@ -616,6 +618,7 @@ class Example(QMainWindow):
         self.textBrowser.ensureCursorVisible()
 
     def buttonClicked(self):
+        print("-----------",os.path.abspath("."))
 
         find_author=self.author==str(True)
         find_abs=self.abs==str(True)
@@ -623,12 +626,12 @@ class Example(QMainWindow):
         if not os.path.exists(path):
             self.logger.error("EXCEL路径不正确！")
             return
-        print(find_author,find_abs,(find_author or find_abs))
+        # print(find_author,find_abs,(find_author or find_abs))
         if not (find_author or find_abs):
             self.logger.error("作者摘要都不为True！")
             return
 
-        et=excel_thread(path,find_author,find_abs,self.logger)
+        et=excel_thread(path,find_author,find_abs,self.logger,use_absnlppath=True)
         et.setDaemon(True)
         et.start()
 
@@ -641,15 +644,24 @@ class Example(QMainWindow):
         self.abs=text
 
 class excel_thread(threading.Thread):
-    def __init__(self, path, find_author,find_abs,logger ):
+    def __init__(self, path, find_author,find_abs,logger,use_absnlppath=False ):
         threading.Thread.__init__(self)
+        self.use_absnlppath=use_absnlppath
         self.path=path
         self.find_author=find_author
         self.find_abs=find_abs
         self.logger=logger
 
     def run(self):
-        excels(self.path, find_author=self.find_author, find_abstract=self.find_abs,logger=self.logger).read()
+        if self.use_absnlppath:
+            excels(self.path,
+                   find_author=self.find_author,
+                   find_abstract=self.find_abs,
+                   logger=self.logger,
+                   nlp_path=os.path.join(os.path.abspath("."),NLP_DIR)
+                   ).read()
+        else:
+            excels(self.path, find_author=self.find_author, find_abstract=self.find_abs,logger=self.logger).read()
 
 
 
