@@ -25,7 +25,7 @@ from PyQt5.QtWidgets import QMainWindow, QPushButton, \
 
 
 
-NLP_DIR="stanford-corenlp-full-2018-10-05"
+NLP_DIR="stanford-corenlp-full-2016-10-31"
 PATH="path"
 ABSTRACT="abstract"
 AUTHOR_NAME="author_name"
@@ -49,7 +49,7 @@ class excels():
             pass
         else:
             self.logger=logger
-        print("================",nlp_path)
+
         self.nlp = StanfordCoreNLP(nlp_path)
 
         if file_path!=None:
@@ -75,12 +75,64 @@ class excels():
         self.list = self.r_sheet.row_values(0)
         for value in self.values:
             # print(value)
-            # print(self.list)
+            print(self.list)
             index = self.list.index(value)
             self.nums[value]=index
         # self.nums["path"]=
 
+    def has_aff(self):
+        '''
+        判断是否有机构
+        :return:
+        '''
+        list = self.r_sheet.row_values(0)
+        aff_index=list.index("loc")
+        aff_item_index=list.index("loc_item")
+
+        for row in range(self.r_sheet.nrows-1):
+            row_num=row+1
+            try:
+                self.logger.info("处理第"+str(row_num)+"行...")
+                text = self.r_sheet.cell(row_num, 1).value
+                print(text)
+                r = self.nlp.ner(text)
+                print(r)
+                for item in r:
+                    if item[1] == "LOCATION":
+                        self.w_sheet.write(row_num,aff_index,"有")
+                        self.w_sheet.write(row_num,aff_item_index,str(r))
+                # path=self.r_sheet.cell(row_num,self.nums["path"]).value
+                # self.logger.info("文件路径："+str(path))
+                # if not os.path.exists(path):
+                #     self.logger.warning("路径不存在！")
+                #     continue
+                #
+                # images = convert_from_path(path)
+                # for index, img in enumerate(images):
+                #
+                #     image_path = '%s/page_%s.png' % (self.outputDir, index)
+                #     self.logger.info("临时图片路径：" + image_path)
+                #     img.save(image_path)
+                #     text =pytesseract.image_to_string(image_path)
+                #
+                #     r = self.nlp.ner(text)
+                #     for item in r:
+                #         if item[1] == "ORGANIZATION":
+                #             self.w_sheet.write(row_num,aff_index,"True")
+                #             self.w_sheet.write(row_num,aff_item_index,item[0])
+                #     break
+            except:
+                pass
+
+        self.save()
+
+
     def read(self):
+        '''
+        抽取作者或摘要
+
+        :return:
+        '''
         self.logger.info("开始抽取文件...")
         for row in range(self.r_sheet.nrows-1):
             row_num=row+1
@@ -119,14 +171,19 @@ class excels():
         if auline=="":
             self.logger.info("pdfminer抽取结果为空！")
             auline = self.au_ocr_read(path)
+        if auline=="":
+            self.logger.info("抽取结果为空！")
+            return ""
         au_dict = self.clear_authors(auline, [],clear_dict=CLEAR_DEF)
         au = ""
+        print(au_dict)
         for au_name in au_dict.keys():
             if len(au_name)>=30:
                 self.logger.info("作者名过长，识别可能出错！")
                 au=""
                 break
             au += au_name + "##"
+        self.logger.info("抽取到作者："+au[:-2])
         return au[:-2]
 
     def au_pdf_read(self,path):
@@ -157,6 +214,7 @@ class excels():
                 for x in layout:
                     if (isinstance(x, LTTextBoxHorizontal)):
                         text=x.get_text()
+                        print(text)
                         for l in text.split("\n"):
                             line_num += 1
                             if self.author_analyze(l):
@@ -667,14 +725,26 @@ class excel_thread(threading.Thread):
 
 
 if __name__ == '__main__':
-    # pdf=r"Y:\小兔子\会议录一期一个PDF\eSim\eSim2010_2A2_040_047.pdf"
-    # print(excels(None).read_au( pdf,debug=True))
+
 
     # print("Liangzhu (Leon) Wang".__len__())
     # print(excels(None).read_abs(r"Y:\小兔子\会议录一期一个PDF\desy1\httpwww-library.desy.depreparchdesyprocproc08-03A.pdf"))
-    # excels(r"Y:\小兔子\会议录一期一个PDF\test2.xls",find_author=True,find_abstract=False).read()
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+                        stream=sys.stdout)
+    logging.root.setLevel(logging.ERROR)
+    logging.getLogger("pdfminer").setLevel(logging.ERROR)
+    logging.getLogger("Ilogger").setLevel(logging.INFO)
+    logger = logging.getLogger("Ilogger")
+    # excel_path=r"Y:\数据配送专用(勿动）\大补\20191112\作者\小何补作者_.xls"
+    # # excel_path=r"Y:\小兔子\中信所2019年任务\补摘要\INTERNATIONAL COMMITTEE ON COMPOSITE MATERIALS 抽\oa_gs_zx_20191111_1_20191111会议录.xls"
+    # excels(excel_path,
+    #        find_author=True,find_abstract=False,
+    #        logger=logger).read()
+    pdf = r"C:\pdfs\jx1108\9f2419ee020d11eab44e00ac37466cf9.pdf"
+    print(excels(r"C:\Users\zhaozhijie.CNPIEC\Documents\Tencent Files\2046391563\FileRecv\hehehe.xls",logger=logger).has_aff())
+
 
     #exe用
-    app = QApplication(sys.argv)
-    ex = Example()
-    sys.exit(app.exec_())
+    # app = QApplication(sys.argv)
+    # ex = Example()
+    # sys.exit(app.exec_())

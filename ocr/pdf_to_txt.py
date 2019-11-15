@@ -65,7 +65,7 @@ def run(pdf_dir=r"C:\pdfs\jx0927",txt_dir="C:\pdfs\jx0927_txt",ocr=False):
         raise ValueError("pdf目录有误...")
     if not os.path.exists(txt_dir):
         os.mkdir(txt_dir)
-
+    print("-----------")
     for i in os.listdir(pdf_dir):
         logger.info("开始处理文件："+str(i))
         try:
@@ -90,8 +90,11 @@ def ocr_read(path,temp_dir="C:/temp/png"):
             text=pytesseract.image_to_string(image_path)
         else:
             text+= pytesseract.image_to_string(image_path)
+        break
     return text
 
 
 if __name__ == '__main__':
-    run(pdf_dir=r"C:\temp\other\新建文件夹",txt_dir=r"C:\temp\other\新建文件夹 (2)",ocr=True)
+    run(pdf_dir=r"Y:\数据配送专用(勿动）\中信所\会议录\待抽取\20191106hylpdf\ispsa",
+        txt_dir=r"Y:\数据配送专用(勿动）\中信所\会议录\待抽取\tmp1",
+        ocr=True)
