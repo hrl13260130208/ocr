@@ -44,10 +44,12 @@ def f(item):
 
 if __name__ == '__main__':
     q=Redis_Queue()
-    # for i in range(10):
-    #     q.set_item(i)
-    q.queue_run(f)
+    # # for i in range(10):
+    # #     q.set_item(i)
+    # q.queue_run(f)
     # print(redis_.keys())
+    print(q.redis_.sadd("set_test","d f sf df".split(" ")))
+    print(type(q.redis_.smembers("set_test")),q.redis_.smembers("set_test"))
 
 
 

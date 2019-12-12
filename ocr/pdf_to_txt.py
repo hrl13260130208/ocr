@@ -83,6 +83,8 @@ def ocr_read(path,temp_dir="C:/temp/png"):
     text=None
     images = convert_from_path(path)
     for index, img in enumerate(images):
+        if index>1:
+            break
         image_path = '%s/page_%s.png' % (temp_dir, index)
         logger.info("临时图片路径：" + image_path)
         img.save(image_path)
@@ -90,11 +92,14 @@ def ocr_read(path,temp_dir="C:/temp/png"):
             text=pytesseract.image_to_string(image_path)
         else:
             text+= pytesseract.image_to_string(image_path)
-        break
+
     return text
 
 
 if __name__ == '__main__':
-    run(pdf_dir=r"Y:\数据配送专用(勿动）\中信所\会议录\待抽取\20191106hylpdf\ispsa",
-        txt_dir=r"Y:\数据配送专用(勿动）\中信所\会议录\待抽取\tmp1",
+    run(pdf_dir=r"Y:\小杰\jx\jx20191209001\Files\给小何的",
+        txt_dir=r"Y:\小杰\jx\jx20191209001\Files\给小何的_txt",
         ocr=True)
+    # run(pdf_dir=r"Y:\数据配送专用(勿动）\中信所\会议录\zxhy20191129001\抽取关键词\转过的61",
+    #     txt_dir=r"Y:\数据配送专用(勿动）\中信所\会议录\zxhy20191129001\抽取关键词\转过的61_txt",
+    #     ocr=True)

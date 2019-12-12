@@ -431,19 +431,19 @@ if __name__ == '__main__':
     # author_test(r"C:\pdfs\yj0903\4d2ff066cdfc11e98b9e00ac37466cf9.pdf")
     # print(nlp.ner("Mingxing Du"))
     # run(r"D:\test\1\wc_hrl_700_20191023_1_20191023.xls")
-    # write_pages_and_absurl(r"H:\hrl\1112\中信所待补全文清单_20191106..xls")
+    write_pages_and_absurl(r"H:\hrl\1203\冶金所待补全文清单_20191126..xls")
 
     # ocr_read_jpn(r"C:\Users\zhaozhijie.CNPIEC\Documents\Tencent Files\2046391563\FileRecv\AD787568.pdf")
-    filename=r"C:\Users\zhaozhijie.CNPIEC\Documents\Tencent Files\2046391563\FileRecv\2c9pe3tZJyR1.pdf"
-    f=open(r"C:\temp\other\AD008384.txt","w+",encoding="utf-8")
-    images = convert_from_path(filename)
-    for index, img in enumerate(images):
-        image_path = '%s/page_%s.png' % (outputDir, index)
-        logger.info("临时图片路径：" + image_path)
-        img.save(image_path)
-        # break
-        f.write(pytesseract.image_to_string(image_path))
-        break
+    # filename=r"C:\Users\zhaozhijie.CNPIEC\Documents\Tencent Files\2046391563\FileRecv\2c9pe3tZJyR1.pdf"
+    # f=open(r"C:\temp\other\AD008384.txt","w+",encoding="utf-8")
+    # images = convert_from_path(filename)
+    # for index, img in enumerate(images):
+    #     image_path = '%s/page_%s.png' % (outputDir, index)
+    #     logger.info("临时图片路径：" + image_path)
+    #     img.save(image_path)
+    #     # break
+    #     f.write(pytesseract.image_to_string(image_path))
+    #     break
 
 
 

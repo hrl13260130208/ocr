@@ -1,11 +1,11 @@
 import sys
-from PyQt5.QtWidgets import QMainWindow, QAction, QFileDialog, QApplication,QLabel
+from PyQt5.QtWidgets import QMainWindow, QAction, QFileDialog, QApplication,QLabel,QWidget,QLineEdit,QTextEdit,QGridLayout
 from PyQt5.QtGui import QImage, QPixmap
 import numpy as np
 import cv2
 
 
-class Example(QMainWindow):
+class Example(QMainWindow,QWidget):
 
     def __init__(self):
         super().__init__()
@@ -22,24 +22,51 @@ class Example(QMainWindow):
         #
         # self.statusBar()
 
-
         menubar = self.menuBar()
         fileMenu = menubar.addMenu('&文件')
 
-        open=QAction("打开",self)
+        open = QAction("打开", self)
         fileMenu.addAction(open)
 
         save = QAction("保存", self)
         fileMenu.addAction(save)
 
-        self.label=QLabel()
-        self.label.resize(200,200)
+        # self.label = QLabel(self)
+        # self.label.resize(200, 200)
+        # self.label.setStyleSheet("border:2px solid red;")
+        # title = QLabel('Title')
+        # author = QLabel('Author')
+        # review = QLabel('Review')
+        #
+        # titleEdit = QLineEdit(self)
+        # authorEdit = QLineEdit(self)
+        # reviewEdit = QTextEdit(self)
+        #
+        # grid = QGridLayout(self)
+        # grid.setSpacing(10)
+        #
+        # grid.addWidget(title, 1, 0)
+        # grid.addWidget(titleEdit, 1, 1)
+        #
+        # grid.addWidget(author, 2, 0)
+        # grid.addWidget(authorEdit, 2, 1)
+        #
+        # grid.addWidget(review, 3, 0)
+        # grid.addWidget(reviewEdit, 3, 1, 5, 1)
+        #
+        # self.setLayout(grid)
+
+
+
+
+
+
 
         open.triggered.connect(self.opne_file)
-        self.setGeometry(1000, 1000, 1000, 500)
+        self.setGeometry(100, 100, 1000, 500)
         self.setWindowTitle('Simple menu')    
         self.show()
-    def opne_file(self):
+    def opne_file(self,label):
         fileName, tmp = QFileDialog.getOpenFileName(
             self, 'Open Image', './__data', '*.png *.jpg *.bmp')
 

@@ -7,7 +7,7 @@ import pytesseract
 import cv2
 import object_detection.export_inference_graph
 from stanfordcorenlp import StanfordCoreNLP
-
+import re
 
 ocr_paths=[]
 
@@ -151,7 +151,7 @@ def nlp():
 if __name__ == "__main__":
     # create_box("C:/pdfs/dynamic/1a2dd1fa5d0511e9a9ca00ac37466cf9.pdf")
     # find_boxs(None,None)
-    nlp()
+    # nlp()
     # test()
     # # print("a".isalpha())
     # main('C:/temp/新建文件夹/0kKzRNRpJayT.pdf', 'C:/temp')
@@ -185,3 +185,8 @@ if __name__ == "__main__":
     # #
     # # cv2.waitKey(0)
     # cv2.imwrite("C:/temp/r1.png",image)
+
+    line="M . K o ua k ou  D je , S . D a b on n e, S. Ta g ro G u eh i a n d L . P a tr ic e K o u am e"
+    pattern = "[A-Z]"
+    new_string = re.sub(pattern, lambda x: " " + x.group(0),line.replace(" a n d "," A n d ").replace(" ",""))
+    print(new_string)
