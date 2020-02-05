@@ -1,7 +1,7 @@
 import sys
 from PyQt5.QtWidgets import QMainWindow, QPushButton, \
     QApplication,QComboBox,QLabel,QFileDialog,QLineEdit,QPlainTextEdit
-from PyQt5 import QtGui
+from PyQt5.QtGui import QFont
 
 
 class Example(QMainWindow):
@@ -13,7 +13,9 @@ class Example(QMainWindow):
         self.abs=None
 
 
+
     def initUI(self):
+        QFont()
         lbl = QLabel("抽取项目：", self)
         lbl.move(50,50)
         lb2 = QLabel("作者：", self)

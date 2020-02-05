@@ -96,12 +96,49 @@ def queue_update():
 
 
 
+def split_pdf(start=2,end=4,name="report2013_1.pdf"):
+    path=r"C:\pdfs\0205\report2013.pdf"
+    images_dir=r"C:\pdfs\0205"
+    # pdf_file = open(path, "rb")
+    # pdf = PyPDF2.PdfFileReader(pdf_file, strict=False)
+    # num = pdf.getNumPages()
+    # new_pages = -1
+    # if num < 10:
+    #     new_pages = 1
+    # elif num > 100:
+    #     new_pages = 10
+    # elif num > 500:
+    #     return None
+    # else:
+    #     new_pages = int(num / 10)
+    # pdf_file.close()
+    # image_paths = []
+    # with convert_from_path(path) as images:
+    images = convert_from_path(path)
+    # print(images,type(images))
+    image_paths=[]
+    new_path=os.path.join(images_dir,name)
+    for index, image in enumerate(images):
+        if index>start and index<=end:
+
+            image_path = images_dir + str(index) + ".jpg"
+            image.save(image_path)
+            image_paths.append(image_path)
+
+    a4inpt = (img2pdf.mm_to_pt(210), img2pdf.mm_to_pt(297))
+    layout_fun = img2pdf.get_layout_fun(a4inpt)
+    with open(new_path, 'wb') as f:
+        f.write(img2pdf.convert(image_paths, layout_fun=layout_fun))
+
+
+
 
 if __name__ == '__main__':
+    split_pdf(start=2,end=4,name="report2013_1.pdf")
     # run_dir()
     # queue_update()
-    q=Redis_Queue()
-    q.queue_run(f=queue_run_dir,skip_first=True)
+    # q=Redis_Queue()
+    # q.queue_run(f=queue_run_dir,skip_first=True)
     # main(r"C:\pdfs\test\85590d58a90611e9b3e500ac37466cf9.pdf",)
     # a4inpt = (img2pdf.mm_to_pt(210),img2pdf.mm_to_pt(297))
     # layout_fun = img2pdf.get_layout_fun(a4inpt)

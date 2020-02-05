@@ -256,7 +256,7 @@ def test():
 
 
 if __name__ == '__main__':
-    print(ocr().read(r"C:\temp\image\b9c0cc34a83911e9a01a00ac37466cf9.jpg"))
+    print(ocr().read(r"C:\temp\tp\QQ截图20200108162229.png"))
     # ocr().auto_annotation("D:/data/image/00a33386a83b11e9bd8900ac37466cf9.jpg")
 
 

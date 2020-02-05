@@ -21,4 +21,6 @@ def run(path):
     cv2.imwrite(r"C:\temp\box\a.jpg",image)
 
 if __name__ == '__main__':
-    run(r"C:\temp\image\b9c0cc34a83911e9a01a00ac37466cf9.jpg")
+    # run(r"C:\temp\image\b9c0cc34a83911e9a01a00ac37466cf9.jpg")
+    a=pytesseract.image_to_string(r"C:\temp\tp\QQ截图20200117144254.png","eng")
+    print(a)
